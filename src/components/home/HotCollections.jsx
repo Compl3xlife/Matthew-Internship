@@ -1,9 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";
+import axios from "axios";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
+import Skeleton from "../UI/Skeleton";
+
+const sliderConfig = {
+  loop: true,
+  slides: { perView: 1, spacing: 15 },
+  breakpoints: {
+    "(min-width: 600px)": {
+      slides: { perView: 2, spacing: 15 },
+    },
+    "(min-width: 900px)": {
+      slides: { perView: 3, spacing: 15 },
+    },
+    "(min-width: 1200px)": {
+      slides: { perView: 4, spacing: 15 },
+    },
+  },
+};
 
 const HotCollections = () => {
+  const [collections, setCollections] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sliderRef, instanceRef] = useKeenSlider(sliderConfig);
+
+  useEffect(() => {
+    axios
+      .get(
+        "https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections"
+      )
+      .then((res) => {
+        setCollections(res.data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <section id="section-collections" className="no-bottom">
       <div className="container">
@@ -14,29 +50,92 @@ const HotCollections = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          {new Array(4).fill(0).map((_, index) => (
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={index}>
-              <div className="nft_coll">
-                <div className="nft_wrap">
-                  <Link to="/item-details">
-                    <img src={nftImage} className="lazy img-fluid" alt="" />
-                  </Link>
-                </div>
-                <div className="nft_coll_pp">
-                  <Link to="/author">
-                    <img className="lazy pp-coll" src={AuthorImage} alt="" />
-                  </Link>
-                  <i className="fa fa-check"></i>
-                </div>
-                <div className="nft_coll_info">
-                  <Link to="/explore">
-                    <h4>Pinky Ocean</h4>
-                  </Link>
-                  <span>ERC-192</span>
-                </div>
+          <div className="col-lg-12" id="d-coll-carousel">
+            {loading ? (
+              <div className="row">
+                {new Array(4).fill(0).map((_, index) => (
+                  <div
+                    className="col-lg-3 col-md-6 col-sm-6 col-xs-12"
+                    key={index}
+                  >
+                    <div className="nft_coll">
+                      <div className="nft_wrap">
+                        <Skeleton width="100%" height="200px" />
+                      </div>
+                      <div className="nft_coll_pp">
+                        <Skeleton
+                          width="50px"
+                          height="50px"
+                          borderRadius="50%"
+                        />
+                      </div>
+                      <div className="nft_coll_info">
+                        <Skeleton width="100px" height="20px" />
+                        <div style={{ height: 8 }}></div>
+                        <Skeleton width="60px" height="20px" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
+            ) : (
+              <div ref={sliderRef} className="keen-slider">
+                {collections.map((collection) => (
+                  <div className="keen-slider__slide" key={collection.id}>
+                    <div className="nft_coll">
+                      <div className="nft_wrap">
+                        <Link
+                          to={`/item-details/${collection.nftId}`}
+                          style={{ display: "block", height: "100%" }}
+                        >
+                          <img
+                            src={collection.nftImage}
+                            className="lazy img-fluid"
+                            alt=""
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </Link>
+                      </div>
+                      <div className="nft_coll_pp">
+                        <Link to="/author">
+                          <img
+                            className="lazy pp-coll"
+                            src={collection.authorImage}
+                            alt=""
+                          />
+                        </Link>
+                        <i className="fa fa-check"></i>
+                      </div>
+                      <div className="nft_coll_info">
+                        <Link to={`/item-details/${collection.nftId}`}>
+                          <h4>{collection.title}</h4>
+                        </Link>
+                        <span>ERC-{collection.code}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button
+              className="owl-prev"
+              type="button"
+              onClick={() => instanceRef.current?.prev()}
+            >
+              <i className="fa fa-chevron-left"></i>
+            </button>
+            <button
+              className="owl-next"
+              type="button"
+              onClick={() => instanceRef.current?.next()}
+            >
+              <i className="fa fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
       </div>
     </section>

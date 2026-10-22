@@ -16715,11 +16715,11 @@ img {
   cursor: not-allowed;
 }
 
-#section-items .nft__item_wrap > a {
+.nft__item_wrap > a {
   height: 100%;
 }
 
-#section-items .nft__item_preview {
+.nft__item .nft__item_preview {
   height: 100% !important;
   object-fit: cover;
 }

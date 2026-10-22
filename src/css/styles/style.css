@@ -16714,3 +16714,12 @@ img {
 .no-cursor {
   cursor: not-allowed;
 }
+
+#section-items .nft__item_wrap > a {
+  height: 100%;
+}
+
+#section-items .nft__item_preview {
+  height: 100% !important;
+  object-fit: cover;
+}

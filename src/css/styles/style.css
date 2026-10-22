@@ -13853,7 +13853,8 @@ a.read_more i {
   margin-top: 20px;
 }
 
-.nft__item_share a {
+.nft__item_share a,
+.nft__item_share button {
   font-size: 12px;
   display: inline-block;
   margin: 0 3px 0 3px;
@@ -13864,10 +13865,16 @@ a.read_more i {
   text-align: center;
   border-radius: 30px;
   color: #ffffff;
+  background: none;
+  border: none;
+  line-height: 1;
+  cursor: pointer;
 }
 
-.nft__item_share a:hover {
+.nft__item_share a:hover,
+.nft__item_share button:hover {
   color: #ffffff;
+  border-color: transparent;
 }
 
 .nft__item_share h4 {

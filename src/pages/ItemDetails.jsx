@@ -93,7 +93,10 @@ const ItemDetails = () => {
                   </div>
                   <div className="col-md-6">
                     <div className="item_info">
-                      <h2>{details.title}</h2>
+                      <h2>
+                        {details.title}
+                        {details.tag ? ` #${details.tag}` : ""}
+                      </h2>
 
                       <div className="item_info_counts">
                         <div className="item_info_views">
